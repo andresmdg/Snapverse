@@ -1,0 +1,2 @@
+spring.application.name=SnapVerse Social
+spring.data.mongodb.uri=mongodb://<username>:<password>@<host>:<port>/<dbname>
