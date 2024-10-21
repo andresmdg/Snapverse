@@ -20,13 +20,13 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    private ResponseEntity<?> login (@RequestBody LoginDTO loginRequest) {
-        Map<String , String> response = authService.login(loginRequest);
+    private ResponseEntity<?> login(@RequestBody LoginDTO loginRequest) {
+        Map<String, String> response = authService.login(loginRequest);
         if (response.containsKey("jwt")) {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
-    
+
 }

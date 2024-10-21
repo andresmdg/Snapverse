@@ -2,7 +2,7 @@ package org.codecollad.snapverse.services;
 
 import java.util.*;
 
-import org.codecollad.snapverse.models.UserEntity;
+import org.codecollad.snapverse.models.User;
 import org.codecollad.snapverse.models.dto.LoginDTO;
 import org.codecollad.snapverse.repositories.UserJpaRepository;
 import org.hibernate.annotations.SecondaryRow;
@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     public Map<String, String> login(LoginDTO login) {
         try {
             Map<String, String> resp = new HashMap<>();
-            Optional<UserEntity> user = userRepository.findByUsername(login.getUsername());
+            Optional<User> user = userRepository.findByUsername(login.getUsername());
 
             if (user.isEmpty()) {
                 resp.put("msg", "User not register!");

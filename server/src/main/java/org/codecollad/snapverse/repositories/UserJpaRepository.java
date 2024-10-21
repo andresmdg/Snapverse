@@ -2,10 +2,10 @@ package org.codecollad.snapverse.repositories;
 
 import java.util.Optional;
 
-import org.codecollad.snapverse.models.UserEntity;
+import org.codecollad.snapverse.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
+public interface UserJpaRepository extends JpaRepository<User, Long> {
 
-    Optional<UserEntity> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 }
