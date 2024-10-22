@@ -13,4 +13,5 @@ public interface JwtUtilityService {
     String generateJWT(Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException;
 
     JWTClaimsSet parseJWT(String jwtToken) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException;
+
 }

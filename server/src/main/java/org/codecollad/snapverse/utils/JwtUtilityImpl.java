@@ -6,7 +6,6 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,6 @@ import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
 
-@Primary
 @Service
 public class JwtUtilityServicesImpl implements JwtUtilityService {
 
