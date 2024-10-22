@@ -1,5 +1,9 @@
 package org.codecollad.snapverse.exceptions;
 
+import org.codecollad.snapverse.exceptions.custom.InvalidCredentialsException;
+import org.codecollad.snapverse.exceptions.custom.TokenGenerationException;
+import org.codecollad.snapverse.exceptions.custom.UserAlreadyExistsException;
+import org.codecollad.snapverse.exceptions.custom.UserNotFoundException;
 import org.codecollad.snapverse.models.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +47,17 @@ public class GlobalExceptionHandler {
                 .token(null)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(TokenGenerationException.class)
+    public ResponseEntity<ApiResponse<String>> handleTokenGenerationException(TokenGenerationException ex) {
+        ApiResponse<String> response = ApiResponse.<String>builder()
+                .success(false)
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
