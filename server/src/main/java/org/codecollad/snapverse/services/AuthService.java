@@ -1,10 +1,13 @@
 package org.codecollad.snapverse.services;
 
-import java.util.Map;
+import org.codecollad.snapverse.models.User;
+import org.codecollad.snapverse.models.dto.ApiResponse;
 import org.codecollad.snapverse.models.dto.LoginDTO;
 
 public interface AuthService {
 
-    Map<String, String> login(LoginDTO login);
-    // Optional<User> register(User user);
+    ApiResponse<Object> login (LoginDTO login);
+
+    ApiResponse<Object> register (User user);
+
 }

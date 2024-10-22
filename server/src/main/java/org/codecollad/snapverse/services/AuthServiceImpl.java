@@ -2,16 +2,19 @@ package org.codecollad.snapverse.services;
 
 import java.util.*;
 
+import org.codecollad.snapverse.exceptions.InvalidCredentialsException;
+import org.codecollad.snapverse.exceptions.UserAlreadyExistsException;
+import org.codecollad.snapverse.exceptions.UserNotFoundException;
 import org.codecollad.snapverse.models.User;
+import org.codecollad.snapverse.models.dto.ApiResponse;
 import org.codecollad.snapverse.models.dto.LoginDTO;
 import org.codecollad.snapverse.repositories.UserJpaRepository;
-import org.hibernate.annotations.SecondaryRow;
+import org.codecollad.snapverse.utils.JwtUtility;
+import org.codecollad.snapverse.utils.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-@Primary
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -19,33 +22,49 @@ public class AuthServiceImpl implements AuthService {
     private UserJpaRepository userRepository;
 
     @Autowired
-    private JwtUtilityService jwtUtilityService;
+    private JwtUtility jwtUtilityService;
 
     @Override
-    public Map<String, String> login(LoginDTO login) {
+    public ApiResponse<Object> login (LoginDTO login) {
         try {
-            Map<String, String> resp = new HashMap<>();
             Optional<User> user = userRepository.findByUsername(login.getUsername());
-
             if (user.isEmpty()) {
-                resp.put("msg", "User not register!");
-                return resp;
+                throw new UserNotFoundException("User not registered!");
             }
 
-            if (verifyPassword(login.getPassword(), user.get().getPassword())) {
-                resp.put("jwt", jwtUtilityService.generateJWT(user.get().getId()));
+            if (PasswordUtil.verifyPassword(login.getPassword(), user.get().getPassword())) {
+                String token = jwtUtilityService.generateJWT(user.get().getId());
+                return ApiResponse.builder()
+                        .success(true)
+                        .statusCode(HttpStatus.OK.value())
+                        .status(HttpStatus.OK)
+                        .message("Login successful")
+                        .token(token)
+                        .build();
             } else {
-                resp.put("msg", "Authentication failed");
+                throw new InvalidCredentialsException("Invalid credentials");
             }
-            return resp;
         } catch (Exception ex) {
             throw new RuntimeException(ex.toString());
         }
     }
 
-    private boolean verifyPassword(String enteredPassword, String storedPassword) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.matches(enteredPassword, storedPassword);
+    @Override
+    public ApiResponse<Object> register (User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new UserAlreadyExistsException("User already exists");
+        }
+
+        PasswordUtil.hashPassword(user.getPassword());
+        userRepository.save(user);
+        return ApiResponse.builder()
+                .success(true)
+                .statusCode(HttpStatus.CREATED.value())
+                .status(HttpStatus.CREATED)
+                .message("User created successfully")
+                .token(null)
+                .data(List.of(user))
+                .build();
     }
 
 }
