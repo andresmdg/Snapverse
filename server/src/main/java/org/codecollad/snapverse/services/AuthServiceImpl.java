@@ -2,9 +2,10 @@ package org.codecollad.snapverse.services;
 
 import java.util.*;
 
-import org.codecollad.snapverse.exceptions.InvalidCredentialsException;
-import org.codecollad.snapverse.exceptions.UserAlreadyExistsException;
-import org.codecollad.snapverse.exceptions.UserNotFoundException;
+import org.codecollad.snapverse.exceptions.custom.InvalidCredentialsException;
+import org.codecollad.snapverse.exceptions.custom.TokenGenerationException;
+import org.codecollad.snapverse.exceptions.custom.UserAlreadyExistsException;
+import org.codecollad.snapverse.exceptions.custom.UserNotFoundException;
 import org.codecollad.snapverse.models.User;
 import org.codecollad.snapverse.models.dto.ApiResponse;
 import org.codecollad.snapverse.models.dto.LoginDTO;
@@ -25,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private JwtUtility jwtUtilityService;
 
     @Override
-    public ApiResponse<Object> login (LoginDTO login) {
+    public ApiResponse<Object> login(LoginDTO login) {
         try {
             Optional<User> user = userRepository.findByUsername(login.getUsername());
             if (user.isEmpty()) {
@@ -33,19 +34,25 @@ public class AuthServiceImpl implements AuthService {
             }
 
             if (PasswordUtil.verifyPassword(login.getPassword(), user.get().getPassword())) {
-                String token = jwtUtilityService.generateJWT(user.get().getId());
-                return ApiResponse.builder()
-                        .success(true)
-                        .statusCode(HttpStatus.OK.value())
-                        .status(HttpStatus.OK)
-                        .message("Login successful")
-                        .token(token)
-                        .build();
+                try {
+                    String token = jwtUtilityService.generateJWT(user.get().getId());
+                    return ApiResponse.builder()
+                            .success(true)
+                            .statusCode(HttpStatus.OK.value())
+                            .status(HttpStatus.OK)
+                            .message("Login successful")
+                            .token(token)
+                            .build();
+                } catch (Exception e) {
+                    throw new TokenGenerationException("Error generating token", e);
+                }
             } else {
                 throw new InvalidCredentialsException("Invalid credentials");
             }
+        } catch (UserNotFoundException | InvalidCredentialsException | TokenGenerationException ex) {
+            throw ex;
         } catch (Exception ex) {
-            throw new RuntimeException(ex.toString());
+            throw new RuntimeException("Unexpected error during login", ex);
         }
     }
 
