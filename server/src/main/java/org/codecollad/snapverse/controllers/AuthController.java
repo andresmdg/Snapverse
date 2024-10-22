@@ -1,16 +1,14 @@
 package org.codecollad.snapverse.controllers;
 
-import java.util.Map;
-
-import org.codecollad.snapverse.models.dto.LoginDTO;
-import org.codecollad.snapverse.services.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.codecollad.snapverse.models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.codecollad.snapverse.models.dto.LoginDTO;
+import org.codecollad.snapverse.services.AuthService;
+import org.codecollad.snapverse.models.dto.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -20,13 +18,15 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    private ResponseEntity<?> login(@RequestBody LoginDTO loginRequest) {
-        Map<String, String> response = authService.login(loginRequest);
-        if (response.containsKey("jwt")) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    private ResponseEntity<ApiResponse<?>> login(@RequestBody LoginDTO loginRequest) {
+        ApiResponse<?> apiResponse = authService.login(loginRequest);
+        return new ResponseEntity<>(apiResponse, apiResponse.getSuccess() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("/register")
+    private ResponseEntity<ApiResponse<?>> register(@RequestBody User user) {
+        ApiResponse<?> response = authService.register(user);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }
