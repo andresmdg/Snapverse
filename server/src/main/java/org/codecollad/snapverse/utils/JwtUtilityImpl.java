@@ -1,4 +1,4 @@
-package org.codecollad.snapverse.services;
+package org.codecollad.snapverse.utils;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSASSASigner;
@@ -25,7 +25,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Service
-public class JwtUtilityServicesImpl implements JwtUtilityService {
+public class JwtUtilityImpl implements JwtUtility {
 
     @Value("classpath:jwtKeys/private_key.pem")
     private Resource privateKeyResource;
@@ -58,6 +58,7 @@ public class JwtUtilityServicesImpl implements JwtUtilityService {
         if (!signedJWT.verify(verifier)) {
             throw new JOSEException("Invalid signature");
         }
+
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
         if (claimsSet.getExpirationTime().before(new Date())) {
             throw new JOSEException("Expired token");
@@ -85,6 +86,7 @@ public class JwtUtilityServicesImpl implements JwtUtilityService {
                 .replace("-----END PUBLIC KEY-----", "")
                 .replace("\n", "")
                 .replace("\r", "");
+
         byte[] decodeKey = Base64.getDecoder().decode(publicKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePublic(new PKCS8EncodedKeySpec(decodeKey));

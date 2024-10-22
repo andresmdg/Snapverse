@@ -1,4 +1,4 @@
-package org.codecollad.snapverse.services;
+package org.codecollad.snapverse.utils;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 
-public interface JwtUtilityService {
+public interface JwtUtility {
 
     String generateJWT(Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException;
 
