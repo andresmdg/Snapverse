@@ -1,7 +1,7 @@
 package org.codecollad.snapverse.security;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.codecollad.snapverse.services.JwtUtilityService;
+import org.codecollad.snapverse.utils.JwtUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    private JwtUtilityService jwtUtilityService;
+    private JwtUtility jwtUtilityService;
 
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
