@@ -57,20 +57,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse<Object> register (User user) {
+    public ApiResponse<Object> register(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException("User already exists");
         }
 
-        PasswordUtil.hashPassword(user.getPassword());
+        String hashedPass = PasswordUtil.hashPassword(user.getPassword());
+        user.setPassword(hashedPass);
+
         userRepository.save(user);
         return ApiResponse.builder()
                 .success(true)
                 .statusCode(HttpStatus.CREATED.value())
                 .status(HttpStatus.CREATED)
                 .message("User created successfully")
-                .token(null)
-                .data(List.of(user))
                 .build();
     }
 

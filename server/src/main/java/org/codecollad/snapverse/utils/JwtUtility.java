@@ -10,8 +10,12 @@ import java.text.ParseException;
 
 public interface JwtUtility {
 
-    String generateJWT(Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException;
+    String generateJWT(Long userId)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException;
 
-    JWTClaimsSet parseJWT(String jwtToken) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException;
+    JWTClaimsSet parseJWT(String jwtToken)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException;
 
+    Long extractUserId(String token)
+            throws ParseException, JOSEException, IOException, NoSuchAlgorithmException, InvalidKeySpecException;
 }
