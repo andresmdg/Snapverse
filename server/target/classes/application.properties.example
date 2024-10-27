@@ -1,0 +1,23 @@
+spring.application.name=SnapVerse Social
+spring.data.mongodb.uri=mongodb://<username>:<password>@<host>:<port>/<dbname>
+
+
+# Configuración de la base de datos H2 en memoria
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=<vacio>
+
+# Habilitar la consola web H2
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# Configuración JPA (Hibernate)
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.show-sql=true   # Para ver las consultas SQL generadas por Hibernate
+spring.jpa.hibernate.ddl-auto=<ddl-auto>
+
+#Opciones para ddl-auto:
+# create-drop: Crea las tablas y las elimina cuando la aplicación termina
+# update: Actualiza el esquema sin borrar los datos existentes
+# validate: Valida el esquema de la base de datos (no realiza cambios)
