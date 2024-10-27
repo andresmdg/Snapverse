@@ -11,8 +11,9 @@
 	<groupId>org.codecollad.snapverse</groupId>
 	<artifactId>snapverse</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SnapVerse Social</name>
+	<name>snapverse</name>
 	<description>Demo project for mini social network</description>
+
 	<url/>
 	<licenses>
 		<license/>
@@ -81,7 +82,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>6.6.1.Final</version>
 		</dependency>
@@ -97,6 +98,13 @@
 			<artifactId>nimbus-jose-jwt</artifactId>
 			<version>9.39</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+
 
 	</dependencies>
 
