@@ -1,0 +1,114 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getSession } from "auth-astro/server";
+import { Separator } from "@/components/ui/separator";
+
+const session = await getSession(Astro.request);
+
+// if (session) return Astro.redirect("/");
+---
+
+<Layout title="Login - Snapverse">
+  <div class="bg-slate-800 h-screen flex items-center justify-center">
+    <div class="w-96 bg-sky-900 p-8 rounded-xl shadow-lg">
+      <div class="flex justify-end gap-2 items-center mb-6">
+        <button
+          onclick="window.location.href='/signin'"
+          class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-md"
+        >
+          Sign In
+        </button>
+        <button
+          class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md"
+          >Sign Up</button
+        >
+      </div>
+
+      <h2 class="text-white text-center text-2xl font-bold mb-6">
+        Snap<span class="text-orange-500">Verse</span>
+      </h2>
+
+      <form id="signin-form" method="POST">
+        <div class="mb-4">
+          <label class="block text-white font-semibold mb-2">
+            Username
+            <input
+              id="username"
+              type="text"
+              name="username"
+              placeholder="Enter your Full name"
+              class="w-full px-4 py-2 rounded-md bg-sky-900 text-white placeholder-gray-400 outline-none outline-transparent"
+              required
+            />
+          </label>
+          <Separator />
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-white font-semibold mb-2">
+            Password
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="*********"
+              class="w-full px-4 py-2 rounded-md bg-sky-900 text-white placeholder-gray-400 outline-none outline-transparent"
+              required
+            />
+          </label>
+          <Separator />
+        </div>
+
+        <div class="flex items-center mb-6">
+          <input
+            id="terms"
+            type="checkbox"
+            class="w-5 h-5 text-orange-500 rounded focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            required
+          />
+          <label for="terms" class="ml-2">
+            <a href="#" class="text-white font-bold hover:underline"
+              >Terms and conditions</a
+            >
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-bold"
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+</Layout>
+<script>
+  import { signIn } from "auth-astro/client";
+  async function handleSubmit(e: any) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form as HTMLFormElement);
+    const data = Object.fromEntries(formData);
+    try {
+      console.log("Esto contiene data:", data);
+      const response = await signIn("authsess", data);
+      console.log("Esto contiene response:", response);
+
+      if (response?.ok) {
+        alert("Login exitoso");
+        window.location.href = "/";
+      } else {
+        alert("Error: usuario y contraseña incorrectas");
+      }
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("signin-form");
+
+    form?.addEventListener("submit", handleSubmit);
+  });
+</script>

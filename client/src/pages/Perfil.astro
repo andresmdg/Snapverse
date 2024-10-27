@@ -1,0 +1,65 @@
+---
+import { getSession } from 'auth-astro/server'
+import Layout from '@/layouts/Layout.astro'
+const session = await getSession(Astro.request);
+
+// if (!session) return Astro.redirect("/signin");
+---
+
+<Layout title = "Perfil - Snapverse">
+  <body class="bg-gray-800 min-h-screen text-white">
+  
+    <header class="bg-blue-900 p-6 shadow-lg">
+      <nav class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Perfil</h1>
+        <div class="flex gap-8">
+          <a href="/" class="hover:text-orange-400">Home</a>
+          <a href="/Perfil/" class="text-orange-500 font-bold">Perfil</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mx-auto mt-12">
+      <section class="bg-blue-700 p-8 rounded-lg shadow-lg max-w-lg mx-auto">
+        <h2 class="text-2xl font-semibold mb-6">Editar Perfil</h2>
+        <form id="profileForm" class="flex flex-col gap-6">
+          <input
+            type="text"
+            id="firstName"
+            placeholder="Nombre"
+            class="p-3 rounded-md text-black"
+            required
+          />
+          <input
+            type="text"
+            id="lastName"
+            placeholder="Apellidos"
+            class="p-3 rounded-md text-black"
+            required
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Contraseña"
+            class="p-3 rounded-md text-black"
+            required
+          />
+          <button
+            type="submit"
+            class="bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-md font-bold"
+          >
+            Guardar Cambios
+          </button>
+        </form>
+
+        <div
+          id="successMessage"
+          class="hidden mt-6 p-4 bg-green-600 rounded-md text-center"
+        >
+          <p>¡Perfil actualizado con éxito!</p>
+        </div>
+      </section>
+    </main>
+  </body>
+
+</Layout>
