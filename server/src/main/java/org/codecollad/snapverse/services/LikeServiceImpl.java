@@ -57,10 +57,11 @@ public class LikeServiceImpl implements LikeService {
 
   @Transactional
   public ApiResponse<Object> remove(Long userId, Long postId) {
-    User user = userJpaRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-    Post post = postJpaRepository.findById(postId)
+    userJpaRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+    postJpaRepository.findById(postId)
         .orElseThrow(() -> new PostNotFoundException("Post not found"));
 
     if (!likeJpaRepository.existsByUserIdAndPostId(userId, postId)) {

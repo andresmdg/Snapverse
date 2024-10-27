@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/likes")
 public class LikeController {
+
   @Autowired
   private LikeService likeService;
 
@@ -22,6 +23,7 @@ public class LikeController {
 
   @DeleteMapping
   public ApiResponse<Object> remove(@RequestParam Long userId, @RequestParam Long postId) {
-    return likeService.add(userId, postId);
+    return likeService.remove(userId, postId);
   }
+  
 }

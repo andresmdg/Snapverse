@@ -10,7 +10,7 @@ public class HomeController {
 
     @GetMapping
     public ResponseEntity<?> home () {
-        return new ResponseEntity<>("API is running...", HttpStatus.OK);
+        return new ResponseEntity<>("Backend is running...", HttpStatus.OK);
     }
 
 }
