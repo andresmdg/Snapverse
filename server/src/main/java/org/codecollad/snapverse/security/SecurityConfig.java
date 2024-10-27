@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
@@ -24,24 +25,23 @@ public class SecurityConfig {
     private JwtUtility jwtUtilityService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests
-                        (authRequest -> authRequest.requestMatchers
-                                        ("/auth/**").permitAll().anyRequest().authenticated())
-                .sessionManagement
-                        (sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors-> cors.disable())
+                .csrf(AbstractHttpConfigurer::disable) 
+                .authorizeHttpRequests(authRequest -> authRequest
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated()) 
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) 
                 .addFilterBefore(new JwtAuthorizationFilter(jwtUtilityService), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling
-                        (exceptionHandling -> exceptionHandling.authenticationEntryPoint(
-                                (request, response, authException) -> { response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                                }))
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint((request, response, authException) ->
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
                 .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder () {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

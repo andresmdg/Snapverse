@@ -22,8 +22,7 @@ import java.util.Collections;
 @Service
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtility jwtUtilityService;
+    private final JwtUtility jwtUtilityService;
 
     public JwtAuthorizationFilter(JwtUtility jwtUtilityService) {
         this.jwtUtilityService = jwtUtilityService;
