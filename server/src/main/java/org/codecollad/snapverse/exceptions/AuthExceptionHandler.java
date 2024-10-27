@@ -57,14 +57,4 @@ public class AuthExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneralException(Exception ex) {
-        ApiResponse<Object> response = ApiResponse.builder()
-                .success(false)
-                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message("An unexpected error occurred: " + ex.getMessage())
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 }

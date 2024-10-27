@@ -22,6 +22,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import jakarta.el.ELException;
+
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -52,27 +54,10 @@ public class PostServiceImpl implements PostService {
           .status(HttpStatus.CREATED)
           .message("Post created successfully")
           .build();
-    } catch (DataAccessException e) {
-      return ApiResponse.builder()
-          .success(false)
-          .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .message("Database error: " + e.getMessage())
-          .build();
-    } catch (UserNotFoundException e) {
-      return ApiResponse.builder()
-          .success(false)
-          .statusCode(HttpStatus.NOT_FOUND.value())
-          .status(HttpStatus.NOT_FOUND)
-          .message(e.getMessage())
-          .build();
-    } catch (Exception e) {
-      return ApiResponse.builder()
-          .success(false)
-          .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .message("An error has occurred: " + e.getMessage())
-          .build();
+    } catch (UserNotFoundException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new RuntimeException("Unexpected error", ex); 
     }
   }
 
