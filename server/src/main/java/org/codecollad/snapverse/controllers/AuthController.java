@@ -19,6 +19,7 @@ public class AuthController {
 
     @PostMapping("/login")
     private ResponseEntity<ApiResponse<?>> login(@RequestBody LoginDTO loginRequest) {
+        System.out.println(loginRequest);
         ApiResponse<?> apiResponse = authService.login(loginRequest);
         return new ResponseEntity<>(apiResponse, apiResponse.getSuccess() ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
     }

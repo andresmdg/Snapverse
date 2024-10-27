@@ -22,13 +22,15 @@ import java.util.Collections;
 @Service
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtility jwtUtilityService;
+    private final JwtUtility jwtUtilityService;
 
-    public JwtAuthorizationFilter (JwtUtility jwtUtilityService) {}
+    public JwtAuthorizationFilter(JwtUtility jwtUtilityService) {
+        this.jwtUtilityService = jwtUtilityService;
+    }
 
     @Override
-    protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -38,8 +40,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String token = header.substring(7);
         try {
             JWTClaimsSet claims = jwtUtilityService.parseJWT(token);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken
-                    (claims.getSubject(), null, Collections.emptyList());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    claims.getSubject(), null, Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | ParseException | JOSEException e) {
             throw new RuntimeException(e);

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 
 @Data
@@ -22,6 +23,8 @@ public class ApiResponse<T> {
   private String message;
   private String details;
   private String token;
-  private List<T> data;
+  private List<?> data;
+  private PostResponseDTO post;
+  private Integer likeCount;
 
 }

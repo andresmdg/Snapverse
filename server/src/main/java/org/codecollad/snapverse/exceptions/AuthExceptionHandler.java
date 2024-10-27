@@ -20,7 +20,6 @@ public class AuthExceptionHandler {
                 .statusCode(HttpStatus.NOT_FOUND.value())
                 .status(HttpStatus.NOT_FOUND)
                 .message("Error: The user is not registered in the system. Details: " + ex.getMessage())
-                .token(null)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -32,7 +31,6 @@ public class AuthExceptionHandler {
                 .statusCode(HttpStatus.CONFLICT.value())
                 .status(HttpStatus.CONFLICT)
                 .message("Error: A user with this username already exists. Details: " + ex.getMessage())
-                .token(null)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
@@ -44,7 +42,6 @@ public class AuthExceptionHandler {
                 .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .status(HttpStatus.UNAUTHORIZED)
                 .message("Error: Invalid credentials provided. Details: " + ex.getMessage())
-                .token(null)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
@@ -67,7 +64,6 @@ public class AuthExceptionHandler {
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message("An unexpected error occurred: " + ex.getMessage())
-                .token(null)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

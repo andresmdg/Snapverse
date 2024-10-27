@@ -1,6 +1,9 @@
 package org.codecollad.snapverse.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
 import jakarta.persistence.*;
@@ -28,6 +31,10 @@ public class Comment {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
+
+  @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
+  private List<Like> likes;
 
   @PrePersist
   protected void onCreate() {

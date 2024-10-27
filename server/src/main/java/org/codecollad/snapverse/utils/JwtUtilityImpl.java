@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
@@ -34,7 +35,9 @@ public class JwtUtilityImpl implements JwtUtility {
     private Resource publicKeyResource;
 
     @Override
-    public String generateJWT (Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
+    public String generateJWT(Long userId)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
+        System.out.println("Generating token for user ID: " + userId);
         PrivateKey privateKey = loadPrivateKey(privateKeyResource);
         JWSSigner signer = new RSASSASigner(privateKey);
         Date now = new Date();
@@ -46,14 +49,15 @@ public class JwtUtilityImpl implements JwtUtility {
 
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
         signedJWT.sign(signer);
-        return  signedJWT.serialize();
+        return signedJWT.serialize();
     }
 
     @Override
-    public JWTClaimsSet parseJWT (String jwtToken) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
+    public JWTClaimsSet parseJWT(String jwtToken)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
         PublicKey publicKey = loadPublicKey(publicKeyResource);
         SignedJWT signedJWT = SignedJWT.parse(jwtToken);
-        JWSVerifier verifier= new RSASSAVerifier((RSAPublicKey) publicKey);
+        JWSVerifier verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
 
         if (!signedJWT.verify(verifier)) {
             throw new JOSEException("Invalid signature");
@@ -66,29 +70,46 @@ public class JwtUtilityImpl implements JwtUtility {
         return claimsSet;
     }
 
-    private PrivateKey loadPrivateKey (Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private PrivateKey loadPrivateKey(Resource resource)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));
         String privateKeyPEM = new String(keyBytes, StandardCharsets.UTF_8)
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
-                .replace("\n", "")
-                .replace("\r", "");
+                .replaceAll("\\s+", "");
 
         byte[] decodeKey = Base64.getDecoder().decode(privateKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decodeKey));
     }
 
-    private PublicKey loadPublicKey (Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private PublicKey loadPublicKey(Resource resource)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] keyBytes = Files.readAllBytes(Paths.get(resource.getURI()));
         String publicKeyPEM = new String(keyBytes, StandardCharsets.UTF_8)
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
-                .replace("\n", "")
-                .replace("\r", "");
+                .replaceAll("\\s+", "");
 
         byte[] decodeKey = Base64.getDecoder().decode(publicKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePublic(new PKCS8EncodedKeySpec(decodeKey));
+        return keyFactory.generatePublic(new X509EncodedKeySpec(decodeKey));
     }
+
+    public Long extractUserId(String token)
+            throws ParseException, JOSEException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        SignedJWT signedJWT = SignedJWT.parse(token.replace("Bearer ", ""));
+
+        PublicKey publicKey = loadPublicKey(publicKeyResource);
+        JWSVerifier verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
+
+        if (!signedJWT.verify(verifier)) {
+            throw new JOSEException("Invalid signature");
+        }
+
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+
+        return Long.valueOf(claimsSet.getSubject());
+    }
+
 }

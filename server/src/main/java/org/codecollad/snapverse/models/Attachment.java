@@ -1,6 +1,7 @@
 package org.codecollad.snapverse.models;
 
 import lombok.*;
+
 import jakarta.persistence.*;
 
 @Data
