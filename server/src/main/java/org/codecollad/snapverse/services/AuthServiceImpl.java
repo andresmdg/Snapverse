@@ -9,6 +9,7 @@ import org.codecollad.snapverse.exceptions.custom.UserNotFoundException;
 import org.codecollad.snapverse.models.User;
 import org.codecollad.snapverse.models.dto.ApiResponse;
 import org.codecollad.snapverse.models.dto.LoginDTO;
+import org.codecollad.snapverse.models.dto.UserDTO;
 import org.codecollad.snapverse.repositories.UserJpaRepository;
 import org.codecollad.snapverse.utils.JwtUtility;
 import org.codecollad.snapverse.utils.PasswordUtil;
@@ -35,12 +36,18 @@ public class AuthServiceImpl implements AuthService {
 
             if (PasswordUtil.verifyPassword(login.getPassword(), user.get().getPassword())) {
                 try {
+                    UserDTO userDTO = UserDTO.builder()
+                        .id(user.get().getId())
+                        .name(user.get().getName())
+                        .lastname(user.get().getLastname())
+                        .username(user.get().getUsername()).build();
                     String token = jwtUtilityService.generateJWT(user.get().getId());
                     return ApiResponse.builder()
                             .success(true)
                             .statusCode(HttpStatus.OK.value())
                             .status(HttpStatus.OK)
                             .message("Login successful")
+                            .user(userDTO)
                             .token(token)
                             .build();
                 } catch (Exception e) {
@@ -64,8 +71,9 @@ public class AuthServiceImpl implements AuthService {
 
         String hashedPass = PasswordUtil.hashPassword(user.getPassword());
         user.setPassword(hashedPass);
-
+        
         userRepository.save(user);
+
         return ApiResponse.builder()
                 .success(true)
                 .statusCode(HttpStatus.CREATED.value())

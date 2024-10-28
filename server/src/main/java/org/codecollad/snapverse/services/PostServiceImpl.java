@@ -18,11 +18,9 @@ import org.codecollad.snapverse.repositories.LikeJpaRepository;
 import org.codecollad.snapverse.repositories.PostJpaRepository;
 import org.codecollad.snapverse.repositories.UserJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import jakarta.el.ELException;
 
 @Service
 public class PostServiceImpl implements PostService {

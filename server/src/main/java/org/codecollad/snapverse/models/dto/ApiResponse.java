@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import org.codecollad.snapverse.models.User;
 import org.springframework.http.HttpStatus;
 
 @Data
@@ -27,6 +26,6 @@ public class ApiResponse<T> {
   private List<?> data;
   private PostResponseDTO post;
   private Integer likeCount;
-  private User user;
+  private UserDTO user;
 
 }
