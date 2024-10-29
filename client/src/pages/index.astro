@@ -8,6 +8,9 @@ const session = await getSession(Astro.request);
 
 if (!session) return Astro.redirect("/signin");
 
+const user = session.user;
+const token = user.token;
+
 const { API_URL } = import.meta.env;
 let posts = [];
 
@@ -16,6 +19,7 @@ try {
     method: "GET",
     headers: {
       "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -52,11 +56,12 @@ try {
 
           <!-- Textarea  -->
           <textarea
+            id="post-textarea"
             name="body"
             class="flex-grow h-9 pt-1 rounded-md bg-transparent placeholder-[#777777] border-0 mx-2 resize-none overflow-y-auto"
             placeholder="¿Qué hay de nuevo?"
             maxlength="250"
-            oninput="this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 400) + 'px';"
+            oninput="this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px';"
             style="max-height: 600px;"></textarea>
 
           <!-- Botón de envío -->
@@ -112,21 +117,38 @@ try {
   }
 </style>
 
-<script>
-  const baseURL = import.meta.env.PUBLIC_API_URL;
+<script data-token={token} data-userId={user?.data.id} data-base-url={API_URL}>
+  const baseURL = document.currentScript.getAttribute("data-base-url");
+  const token = document.currentScript.getAttribute("data-token");
+  const userId = document.currentScript.getAttribute("data-userId");
   const form = document.getElementById("post");
 
-  form?.addEventListener("submit", async (e) => {
+  const textarea = document.getElementById("post-textarea");
+
+  const adjustTextareaHeight = () => {
+    textarea.style.height = "auto";
+    textarea.style.height = Math.min(textarea.scrollHeight, 100) + "px";
+  };
+
+  textarea.addEventListener("input", adjustTextareaHeight);
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+
+    data.userId = userId
+    data.liked = false
+
+    console.log(data)
 
     // Envía el formulario
     const response = await fetch(`${baseURL}/posts`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     });
