@@ -1,0 +1,27 @@
+---
+import "@/styles/globals.css";
+import Layout from "@/layouts/Main.astro";
+---
+
+<Layout title="No disponible">
+  <div
+    class="flex items-center justify-center min-h-screen text-center text-white text-[16px]"
+  >
+    <div class="p-6 rounded-lg">
+      <span class="block font-semibold mb-2">
+        Lo sentimos, esta página no está disponible
+      </span>
+      <span class="block mb-4 text-[#777777] text-[15px]">
+        Es posible que el enlace que ha seguido no funcione o que la página haya
+        sido eliminada.
+      </span>
+      <a href="/" class="inline-block">
+        <div
+          class="bg-white text-black px-4 py-0 h-[36px] flex items-center justify-center rounded-[10px] hover:bg-gray-200"
+        >
+          Volver
+        </div>
+      </a>
+    </div>
+  </div>
+</Layout>

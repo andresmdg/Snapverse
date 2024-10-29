@@ -1,0 +1,167 @@
+---
+import Layout from "@/layouts/Main.astro";
+import { getSession } from "auth-astro/server";
+
+const session = await getSession(Astro.request);
+let errorMessage = "";
+
+if (session) return Astro.redirect("/");
+---
+
+<Layout title="Register - Snapverse">
+  <div class="h-screen flex items-center justify-center">
+    <div class="w-96 card p-8 rounded-xl shadow-lg border border-[#f3f5f726]">
+      <div class="flex justify-end gap-2 items-center mb-6">
+        <button
+          onclick="window.location.href='/signin'"
+          class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-[10px]"
+        >
+          Sign In
+        </button>
+        <button
+          onclick="window.location.href='/signup'"
+          class="py-2 px-4 outline-none border border-[#f3f5f726] rounded-[10px]"
+        >
+          Sign Up
+        </button>
+      </div>
+
+      <h2 class="text-center text-2xl font-bold mb-6">
+        Snap<span class="text-orange-500 text-2xl">Verse</span>
+      </h2>
+
+      <form id="signup-form" method="POST" class="space-y-4">
+        <div class="flex space-x-4 mb-4">
+          <div class="flex-1">
+            <label class="block font-semibold mb-2 text-white">Nombre</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Nombre"
+              class="w-full px-0 py-2 rounded-md bg-transparent text-white placeholder-[#777777] outline-none border-b border-separator"
+              required
+              autocomplete="off"
+            />
+          </div>
+          <div class="flex-1">
+            <label class="block font-semibold mb-2 text-white">Apellido</label>
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Apellido"
+              class="w-full px-0 py-2 rounded-md bg-transparent text-white placeholder-[#777777] outline-none border-b border-separator"
+              required
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="block font-semibold mb-2 text-white">Usuario</label>
+          <input
+            type="text"
+            name="username"
+            placeholder="Usuario ejemp. user123"
+            class="w-full px-0 py-2 rounded-md bg-transparent text-white placeholder-[#777777] outline-none border-b border-separator"
+            required
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label class="block font-semibold mb-2 text-white">Contraseña</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="*********"
+            class="w-full px-0 py-2 rounded-md bg-transparent text-white placeholder-[#777777] outline-none border-b border-separator"
+            required
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="flex items-center mb-4">
+          <input
+            id="terms"
+            type="checkbox"
+            class="w-5 h-5 rounded focus:outline-none"
+            required
+          />
+          <label for="terms" class="ml-2 text-white">
+            Acepto que
+            <span class="text-orange-500 font-bold no-underline">
+              Todos mis datos son correctos
+            </span>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          onclick=""
+          class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg"
+        >
+          Sign Up
+        </button>
+      </form>
+      <div class="mt-4 text-red-500 error-div">
+        {errorMessage}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .card {
+    background-color: hsl(0, 0%, 9%);
+  }
+  .border-separator {
+    border-color: hsla(210, 20%, 96%, 0.15);
+  }
+</style>
+
+<script>
+  const baseURL = import.meta.env.PUBLIC_API_URL;
+  const form = document.getElementById("signup-form");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let errorMessage = "";
+    let errorDiv = document.querySelector(".error-div");
+
+    try {
+      const f = e.target;
+      const formData = new FormData(f as HTMLFormElement);
+      const data = Object.fromEntries(formData.entries());
+
+      const response = await fetch(`${baseURL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result && result.success) {
+        window.location.href = "/signin";
+      } else {
+        errorMessage =
+          result.message || "Error al registrarse, Inténtalo de nuevo.";
+        if (errorDiv) {
+          errorDiv.textContent = errorMessage;
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else {
+        errorMessage = "Se produjo un error inesperado: " + error;
+      }
+      if (errorDiv) {
+        errorDiv.textContent = errorMessage;
+      }
+    }
+  });
+</script>

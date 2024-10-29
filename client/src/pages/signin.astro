@@ -1,0 +1,112 @@
+---
+import Layout from "@/layouts/Main.astro";
+import { getSession } from "auth-astro/server";
+
+let errorMessage = "";
+const session = await getSession(Astro.request);
+
+if (session) return Astro.redirect("/");
+---
+
+<Layout title="Login - Snapverse">
+  <div class="h-screen flex items-center justify-center">
+    <div class="w-96 card p-8 rounded-xl shadow-lg border border-[#f3f5f726]">
+      <div class="flex justify-end gap-2 items-center mb-6">
+        <button
+          onclick="window.location.href='/signin'"
+          class="bg-orange-500 py-2 px-4 rounded-[10px]"
+        >
+          Sign In
+        </button>
+        <button
+          onclick="window.location.href='/signup'"
+          class="py-2 px-4 outline-none border border-[#f3f5f726] rounded-[10px]"
+          >Sign Up</button
+        >
+      </div>
+
+      <h2 class="text-center text-2xl font-bold mb-6">
+        Snap<span class="text-orange-500 text-2xl">Verse</span>
+      </h2>
+
+      <form id="signin-form" method="POST">
+        <div class="mb-4">
+          <label class="block font-semibold mb-2">
+            Username
+            <input
+              id="username"
+              type="text"
+              name="username"
+              placeholder="Usuario ejemp. user123"
+              class="w-full px-4 py-2 rounded-md bg-transparent placeholder-[#777777] outline-none outline-transparent"
+              required
+              autocomplete="off"
+            />
+          </label>
+          <hr class="separator w-full h-[0.5px]" />
+        </div>
+
+        <div class="mb-8">
+          <label class="block font-semibold mb-2">
+            Password
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="*********"
+              autocomplete="off"
+              class="w-full px-4 py-2 rounded-md bg-transparent placeholder-[#777777] outline-none"
+              required
+            />
+          </label>
+          <hr class="separator w-full h-[0.5px]" />
+        </div>
+
+        <button type="submit" class="w-full bg-orange-500 py-3 rounded-lg">
+          Sign In
+        </button>
+      </form>
+      <div class="mt-4 text-red-500 error-div">
+        {errorMessage}
+      </div>
+    </div>
+  </div>
+</Layout>
+<style>
+  .card {
+    background-color: hsl(0, 0%, 9%);
+  }
+  hr {
+    border: none;
+    background: #dadde1;
+  }
+  .separator {
+    background-color: hsla(210, 20%, 96%, 0.15);
+  }
+</style>
+
+<script>
+  import { signIn } from "auth-astro/client";
+
+  const form = document.getElementById("signin-form");
+
+  form?.addEventListener("submit", async (e: SubmitEvent) => {
+    e.preventDefault();
+
+    let errorMessage = "";
+
+    const formData = new FormData(form as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      await signIn("credentials", data);
+      window.location.href = "/"
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error("Se produjo un error inesperado:", err);
+      }
+    }
+  });
+</script>

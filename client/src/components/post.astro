@@ -1,0 +1,33 @@
+---
+import avatar from "@/assets/avatar.svg";
+import Status from "@/components/status.astro";
+
+interface Props {
+  name: string;
+  body: string;
+}
+
+const { name, body } = Astro.props;
+---
+
+<!-- Post -->
+<div class="w-full p-4 cursor-pointer">
+  <div class="flex gap-2 items-start">
+    <!-- Contiene arriba a la izquierda la img del avatar -->
+    <div class="rounded-full w-9 h-9 overflow-hidden flex justify-center items-center bg-orange-500 mt-[4px]" >
+      <img
+        class="w-2/4 h-2/4 object-cover"
+        src={avatar.src}
+        alt="avatar image"
+      />
+    </div>
+    <!-- Contiene a la derecha del image los siguientes -->
+    <div class="flex-1 p-2 py-0">
+      <!-- Contiene el nombre del usuario -->
+      <span class="font-semibold">{name}</span>
+      <!-- Debe contener debajo del nombre del usuario el contenido del post -->
+      <p class="mt-2">{body}</p>
+    </div>
+  </div>
+  <Status />
+</div>

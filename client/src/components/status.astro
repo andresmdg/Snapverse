@@ -1,0 +1,20 @@
+---
+import likes from "@/assets/likes.svg";
+import comments from "@/assets/comments.svg";
+
+let isLiked: boolean = false;
+---
+
+<div class="flex gap-8 items-center mt-0 pl-[50px] px-4 pt-1 rounded-lg pb-0">
+  <button
+    class={`flex items-center ${isLiked ? "text-red-500" : ""}`}
+  >
+    <img src={likes.src} alt="Like" class="mr-2 w-[19px]" />
+    <span>0</span>
+  </button>
+
+  <button class="flex items-center">
+    <img src={comments.src} alt="Comments" class="mr-2 w-[19px]" />
+    <span>0</span>
+  </button>
+</div>

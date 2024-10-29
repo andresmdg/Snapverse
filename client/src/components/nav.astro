@@ -1,0 +1,23 @@
+---
+const route = Astro.url.pathname;
+---
+
+<header class="w-full px-8 py-4 shadow-lg">
+  <nav class="flex justify-between">
+    <h2 class="text-center text-2xl font-bold">
+      Snap<span class="text-orange-500 text-2xl">Verse</span>
+    </h2>
+    <div class="flex gap-8 items-center mr-8">
+      <a
+        href="/"
+        class={`${route === "/" ? "" : "text-[#4d4d4d]"} font-bold`}
+        >Home</a
+      >
+      <a
+        href="/perfil"
+        class={`${route === "/perfil" ? "" : "text-[#4d4d4d]"} font-bold`}
+        >Perfil</a
+      >
+    </div>
+  </nav>
+</header>

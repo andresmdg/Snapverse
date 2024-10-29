@@ -3,6 +3,9 @@ export default {
     darkMode: ['class'],
     content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
 	theme: {
+			borderWidth: {
+				DEFAULT: '0.5px'
+			},
     	extend: {
     		borderRadius: {
     			lg: 'var(--radius)',
