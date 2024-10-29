@@ -4,7 +4,26 @@ import Layout from "@/layouts/Article.astro";
 import Post from "@/components/post.astro";
 import { getSession } from "auth-astro/server";
 
-const session = await getSession(Astro.request);
+// Definición de Interfaces
+interface UserData {
+  id: string;
+  name: string;
+  lastname: string;
+  username: string;
+}
+
+interface User {
+  name: string;
+  data: UserData;
+  token: string;
+}
+
+interface Session {
+  user: User;
+  expires: string;
+}
+
+const session = (await getSession(Astro.request)) as Session;
 
 if (!session) return Astro.redirect("/signin");
 
@@ -117,7 +136,12 @@ try {
   }
 </style>
 
-<script data-token={token} data-userId={user?.data.id} data-base-url={API_URL} is:inline>
+<script
+  data-token={token}
+  data-userId={user?.data.id}
+  data-base-url={API_URL}
+  is:inline
+>
   const baseURL = document.currentScript.getAttribute("data-base-url");
   const token = document.currentScript.getAttribute("data-token");
   const userId = document.currentScript.getAttribute("data-userId");
@@ -138,10 +162,8 @@ try {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    data.userId = userId
-    data.liked = false
-
-    console.log(data)
+    data.userId = userId;
+    data.liked = false;
 
     // Envía el formulario
     const response = await fetch(`${baseURL}/posts`, {
@@ -154,7 +176,6 @@ try {
     });
 
     if (response.ok) {
-      console.log("Publicación exitosa");
       form.reset();
     } else {
       console.error("Error al publicar", await response.text());
