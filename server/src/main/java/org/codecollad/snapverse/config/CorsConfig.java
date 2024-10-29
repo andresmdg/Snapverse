@@ -14,7 +14,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://hoppscotch.io");
+        configuration.setAllowedOrigins(List.of("https://hoppscotch.io", "http://localhost:4321", "https://unique-perfection-production-8c3b.up.railway.app"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Origin", "Content-Type", "Accept", "Authorization"));
         configuration.setAllowCredentials(true);
