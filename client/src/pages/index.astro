@@ -8,8 +8,8 @@ const session = await getSession(Astro.request);
 
 if (!session) return Astro.redirect("/signin");
 
-const user = session.user;
-const token = user.token;
+const user = session?.user;
+const token = user?.token;
 
 const { API_URL } = import.meta.env;
 let posts = [];
@@ -117,7 +117,7 @@ try {
   }
 </style>
 
-<script data-token={token} data-userId={user?.data.id} data-base-url={API_URL}>
+<script data-token={token} data-userId={user?.data.id} data-base-url={API_URL} is:inline>
   const baseURL = document.currentScript.getAttribute("data-base-url");
   const token = document.currentScript.getAttribute("data-token");
   const userId = document.currentScript.getAttribute("data-userId");

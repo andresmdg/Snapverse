@@ -2,7 +2,6 @@
 import Layout from "@/layouts/Main.astro";
 import { getSession } from "auth-astro/server";
 
-let errorMessage = "";
 const session = await getSession(Astro.request);
 
 if (session) return Astro.redirect("/");
@@ -66,9 +65,8 @@ if (session) return Astro.redirect("/");
           Sign In
         </button>
       </form>
-      <div class="mt-4 text-red-500 error-div">
-        {errorMessage}
-      </div>
+      <!-- <div class="mt-4 text-red-500 error-div">
+      </div> -->
     </div>
   </div>
 </Layout>
@@ -92,8 +90,6 @@ if (session) return Astro.redirect("/");
 
   form?.addEventListener("submit", async (e: SubmitEvent) => {
     e.preventDefault();
-
-    let errorMessage = "";
 
     const formData = new FormData(form as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
