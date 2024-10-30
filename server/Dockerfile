@@ -18,5 +18,9 @@ RUN if [ ! -f /app/jwtkeys/private_key.pem ]; then \
       openssl rsa -pubout -in /app/jwtkeys/private_key.pem -out /app/jwtkeys/public_key.pem; \
     fi
 
+RUN chmod -R 755 /app/jwtkeys
+RUN ls -l /app/jwtkeys
+
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "snapverse.jar", "--spring.profiles.active=docker"]
