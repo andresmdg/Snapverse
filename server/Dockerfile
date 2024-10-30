@@ -1,16 +1,23 @@
+# Etapa de construcción para crear el JAR
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 COPY . .
+RUN mvn clean package -DskipTests
 
-RUN mkdir -p src/main/resources/jwtKeys && \
-    openssl genrsa -out src/main/resources/jwtKeys/private_key.pem 2048 && \
-    openssl rsa -pubout -in src/main/resources/jwtKeys/private_key.pem -out src/main/resources/jwtKeys/public_key.pem && \
-    mvn clean package -DskipTests
-
+# Etapa final para el contenedor de aplicación
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from=build /app/target/snapverse-0.0.1-SNAPSHOT.jar snapverse.jar
-COPY --from=build /app/src/main/resources/jwtKeys /app/src/main/resources/jwtKeys
 
+# Copia el JAR desde la etapa de construcción
+COPY --from=build /app/target/snapverse-0.0.1-SNAPSHOT.jar snapverse.jar
+
+# Crea y copia las llaves dentro del contenedor en una carpeta accesible en el classpath
+RUN mkdir -p /app/resources/jwtKeys && \
+    openssl genrsa -out /app/resources/jwtKeys/private_key.pem 2048 && \
+    openssl rsa -pubout -in /app/resources/jwtKeys/private_key.pem -out /app/resources/jwtKeys/public_key.pem
+
+# Expone el puerto
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "snapverse.jar", "--spring.profiles.active=docker"]
+
+# Ejecuta la aplicación
+ENTRYPOINT ["java", "-jar", "snapverse.jar", "--spring.config.location=classpath:/app/resources/"]
