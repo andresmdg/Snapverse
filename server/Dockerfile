@@ -11,7 +11,7 @@ RUN mkdir -p /app/src/main/resources/jwtKeys && \
     openssl genrsa -out /app/src/main/resources/jwtKeys/private_key.pem 2048 && \
     openssl rsa -pubout -in /app/src/main/resources/jwtKeys/private_key.pem -out /app/src/main/resources/jwtKeys/public_key.pem
 
-COPY /app/src/main/resources/jwtKeys /app/src/main/resources/jwtKeys 
+COPY jwtKeys /app/src/main/resources/jwtKeys
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "snapverse.jar", "--spring.profiles.active=docker"]
