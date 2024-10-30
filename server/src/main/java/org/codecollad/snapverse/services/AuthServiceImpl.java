@@ -68,6 +68,8 @@ public class AuthServiceImpl implements AuthService {
         } catch (UserNotFoundException | InvalidCredentialsException | TokenGenerationException ex) {
             throw ex;
         } catch (Exception ex) {
+            System.out.println("Causa: " + ex.getCause());
+            System.out.println("Mensaje: " + ex.getMessage());
             throw new RuntimeException("Unexpected error during login", ex);
         }
     }
