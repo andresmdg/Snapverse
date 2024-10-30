@@ -1,7 +1,9 @@
 HELP.md
+.env
+.idea
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/test/**/target/
-
+./target
 ### STS ###
 .apt_generated
 .classpath
@@ -12,7 +14,6 @@ HELP.md
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
 *.iws
 *.iml
 *.ipr
