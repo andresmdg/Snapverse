@@ -12,12 +12,12 @@ WORKDIR /app
 COPY --from=build /app/target/snapverse-0.0.1-SNAPSHOT.jar snapverse.jar
 
 # Crea y copia las llaves dentro de una carpeta accesible en el classpath
-RUN mkdir -p /app/jwtKeys && \
-    openssl genrsa -out /app/jwtKeys/private_key.pem 2048 && \
-    openssl rsa -pubout -in /app/jwtKeys/private_key.pem -out /app/jwtKeys/public_key.pem
+RUN mkdir -p /app/src/main/resources/jwtKeys && \
+    openssl genrsa -out /app/src/main/resources/jwtKeys/private_key.pem 2048 && \
+    openssl rsa -pubout -in /app/src/main/resources/jwtKeys/private_key.pem -out /app/src/main/resources/jwtKeys/public_key.pem
 
 # Expone el puerto
 EXPOSE 8080
 
 # Ejecuta la aplicación con el perfil Docker
-ENTRYPOINT ["java", "-jar", "snapverse.jar", "--spring.config.location=classpath:/"]
+ENTRYPOINT ["java", "-jar", "snapverse.jar"]
