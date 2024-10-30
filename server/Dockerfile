@@ -14,9 +14,13 @@ RUN mkdir -p /app/jwtkeys
 
 # Comando para generar las llaves si no existen
 RUN if [ ! -f /app/jwtkeys/private_key.pem ]; then \
+      echo "Generando llaves JWT..."; \
       openssl genrsa -out /app/jwtkeys/private_key.pem 2048 && \
       openssl rsa -pubout -in /app/jwtkeys/private_key.pem -out /app/jwtkeys/public_key.pem; \
+    else \
+      echo "Las llaves JWT ya existen."; \
     fi
+
 
 RUN chmod -R 755 /app/jwtkeys
 RUN ls -l /app/jwtkeys

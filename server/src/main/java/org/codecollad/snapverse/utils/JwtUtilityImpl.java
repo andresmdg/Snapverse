@@ -5,6 +5,7 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,18 @@ public class JwtUtilityImpl implements JwtUtility {
 
     @Value("${jwtKeys.publicKeyPath}")
     private Resource publicKeyResource;
+
+    @PostConstruct
+    public void init() {
+        try {
+            System.out.println("Private key path: " + privateKeyResource.getURI());
+            System.out.println("Public key path: " + publicKeyResource.getURI());
+        } catch (IOException e) {
+            System.out.println("No se pueden encontrar las keys");
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public String generateJWT(Long userId)
