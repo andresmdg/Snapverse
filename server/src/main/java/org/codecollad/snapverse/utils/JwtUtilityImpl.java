@@ -38,13 +38,22 @@ public class JwtUtilityImpl implements JwtUtility {
     @PostConstruct
     public void init() {
         try {
-            System.out.println("Private key path: " + privateKeyResource.getURI());
-            System.out.println("Public key path: " + publicKeyResource.getURI());
-        } catch (IOException e) {
-            System.out.println("No se pueden encontrar las keys");
-            throw new RuntimeException(e);
+            System.out.println("Private Key Path: " + privateKeyResource.getURI());
+            System.out.println("Public Key Path: " + publicKeyResource.getURI());
+
+            loadPrivateKey(privateKeyResource);
+            loadPublicKey(publicKeyResource);
+        } catch (Exception e) {
+            System.err.println("Error during JWT initialization: " + e.getMessage());
+            try {
+                throw e;
+            } catch (IOException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
+                System.err.println("Error during JWT initialization 2: " + e.getMessage());
+                throw new RuntimeException(ex);
+            }
         }
     }
+
 
 
     @Override
