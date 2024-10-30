@@ -1,23 +1,22 @@
 package org.codecollad.snapverse.services;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.codecollad.snapverse.exceptions.custom.UserNotFoundException;
+import org.codecollad.snapverse.exceptions.custom.post.PostNotFoundException;
+import org.codecollad.snapverse.exceptions.custom.user.UserNotFoundException;
 import org.codecollad.snapverse.models.Comment;
 import org.codecollad.snapverse.models.Post;
 import org.codecollad.snapverse.models.User;
-import org.codecollad.snapverse.models.dto.ApiResponse;
-import org.codecollad.snapverse.models.dto.CommentDTO;
-import org.codecollad.snapverse.models.dto.LikeDTO;
-import org.codecollad.snapverse.models.dto.PostDTO;
-import org.codecollad.snapverse.models.dto.PostResponseDTO;
+import org.codecollad.snapverse.models.dto.*;
+import org.codecollad.snapverse.repositories.CommentJpaRepository;
 import org.codecollad.snapverse.repositories.LikeJpaRepository;
 import org.codecollad.snapverse.repositories.PostJpaRepository;
 import org.codecollad.snapverse.repositories.UserJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +32,9 @@ public class PostServiceImpl implements PostService {
 
   @Autowired
   private LikeJpaRepository likeJpaRepository;
+
+  @Autowired
+  private CommentJpaRepository commentJpaRepository;
 
   @Override
   public ApiResponse<Object> add(PostDTO postDTO) {
@@ -90,9 +92,6 @@ public class PostServiceImpl implements PostService {
           .build();
     } else {
       int likeCount = countLikes(id);
-      List<LikeDTO> likeDTOs = post.getLikes().stream()
-          .map(like -> new LikeDTO(like.getId(), like.getUser().getId(), post.getId()))
-          .collect(Collectors.toList());
 
       // Obtener los últimos 3 comentarios
       List<CommentDTO> commentDTOs = post.getComments().stream()
@@ -108,14 +107,13 @@ public class PostServiceImpl implements PostService {
               likeCount))
           .collect(Collectors.toList());
 
-      PostResponseDTO postResponse = new PostResponseDTO(
-          post.getId(),
-          post.getBody(),
-          likeDTOs,
-          post.getCreatedAt(),
-          post.getAttachments(),
-          commentDTOs,
-          likeCount);
+      PostResponseDTO postResponse = PostResponseDTO.builder()
+              .id(post.getId())
+              .body(post.getBody())
+              .createdAt(post.getCreatedAt())
+              .attachments(post.getAttachments())
+              .comments(commentDTOs)
+              .likesCount(likeCount).build();
 
       return ApiResponse.builder()
           .statusCode(HttpStatus.OK.value())
@@ -128,57 +126,57 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public ApiResponse<Object> getAll() {
+  public ApiResponse<Object> getAll(int page, int size) {
     try {
-      List<Post> posts = postJpaRepository.findAllByOrderByCreatedAtDesc();
-      List<PostResponseDTO> postResponses = new ArrayList<>();
+      Pageable pageable = PageRequest.of(page, size);
 
-      for (Post post : posts) {
-        int likeCount = likeJpaRepository.countByPostId(post.getId());
+      Page<Post> postsPage = postJpaRepository.findAll(pageable);
 
-        List<LikeDTO> likeDTOs = post.getLikes().stream()
-            .map(like -> new LikeDTO(like.getId(), like.getUser().getId(), post.getId()))
-            .collect(Collectors.toList());
+      List<Map<String, Object>> responseData = postsPage.stream().map(post -> {
+        User user = post.getUser();
 
-        // Obtener solo los últimos 3 comentarios
-        List<CommentDTO> commentDTOs = post.getComments().stream()
-            .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
-            .limit(3)
-            .map(comment -> new CommentDTO(
-                comment.getId(),
-                comment.getBody(),
-                comment.getUser().getId(),
-                comment.getLikes().stream()
-                    .map(like -> new LikeDTO(like.getId(), like.getUser().getId(), comment.getId()))
-                    .collect(Collectors.toList()),
-                likeCount))
-            .collect(Collectors.toList());
+        UserDTO userDTO = UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
+                .lastname(user.getLastname())
+                .build();
 
-        PostResponseDTO postResponse = new PostResponseDTO(
-            post.getId(),
-            post.getBody(),
-            likeDTOs,
-            post.getCreatedAt(),
-            post.getAttachments(),
-            commentDTOs,
-            likeCount);
-        postResponses.add(postResponse);
-      }
+        PostDTO postDTO = PostDTO.builder()
+                .id(post.getId())
+                .userId(user.getId())
+                .body(post.getBody())
+                .comments(post.getComments())
+                .createAt(post.getCreatedAt())
+                .likesCount(likeJpaRepository.countByPostId(post.getId()))
+                .commentsCount(commentJpaRepository.countByPostId(post.getId()))
+                .build();
+
+        Map<String, Object> entry = new HashMap<>();
+        entry.put("user", userDTO);
+        entry.put("post", postDTO);
+
+        return entry;
+      }).collect(Collectors.toList());
 
       return ApiResponse.builder()
-          .statusCode(HttpStatus.OK.value())
-          .status(HttpStatus.OK)
-          .message("Posts found")
-          .data(postResponses)
-          .build();
+              .success(true)
+              .statusCode(HttpStatus.OK.value())
+              .status(HttpStatus.OK)
+              .message("All posts retrieved successfully")
+              .data(responseData)
+              .build();
+
     } catch (Exception e) {
       return ApiResponse.builder()
-          .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-          .status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .message("An error has occurred: " + e.getMessage())
-          .build();
+              .success(false)
+              .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+              .status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .message("An error occurred: " + e.getMessage())
+              .build();
     }
   }
+
 
   public int countLikes(Long postId) {
     return likeJpaRepository.countByPostId(postId);

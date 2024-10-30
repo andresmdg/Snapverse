@@ -1,7 +1,7 @@
 package org.codecollad.snapverse.services;
 
-import org.codecollad.snapverse.exceptions.custom.PostNotFoundException;
-import org.codecollad.snapverse.exceptions.custom.UserNotFoundException;
+import org.codecollad.snapverse.exceptions.custom.post.PostNotFoundException;
+import org.codecollad.snapverse.exceptions.custom.user.UserNotFoundException;
 import org.codecollad.snapverse.models.Like;
 import org.codecollad.snapverse.models.Post;
 import org.codecollad.snapverse.models.User;

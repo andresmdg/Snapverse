@@ -1,4 +1,4 @@
-package org.codecollad.snapverse.exceptions.custom;
+package org.codecollad.snapverse.exceptions.custom.user;
 
 public class InvalidCredentialsException extends RuntimeException {
 

@@ -1,9 +1,9 @@
 package org.codecollad.snapverse.exceptions;
 
-import org.codecollad.snapverse.exceptions.custom.InvalidCredentialsException;
-import org.codecollad.snapverse.exceptions.custom.TokenGenerationException;
-import org.codecollad.snapverse.exceptions.custom.UserAlreadyExistsException;
-import org.codecollad.snapverse.exceptions.custom.UserNotFoundException;
+import org.codecollad.snapverse.exceptions.custom.user.InvalidCredentialsException;
+import org.codecollad.snapverse.exceptions.custom.user.TokenGenerationException;
+import org.codecollad.snapverse.exceptions.custom.user.UserAlreadyExistsException;
+import org.codecollad.snapverse.exceptions.custom.user.UserNotFoundException;
 import org.codecollad.snapverse.models.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

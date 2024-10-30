@@ -5,10 +5,12 @@ services:
     build: server
     mem_limit: 512m
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
-      DB_URL: jdbc:mysql://snap_verse:3306/snapverse_db?createDatabaseIfNotExist=true&serverTimezone=UTC
-      DB_USER_NAME: root
+      DB_HOST: snap_verse
+      DB_PORT: 3306
+      DB_NAME: snapverse_db
+      DB_USERNAME: root
       DB_PASSWORD: Ual110902@
     restart: always
     depends_on:
@@ -18,7 +20,7 @@ services:
   snap_verse:
     image: mysql:8.0
     ports:
-      - "3307:3306"
+      - "3308:3306"
     environment:
       MYSQL_ROOT_PASSWORD: Ual110902@
       MYSQL_DATABASE: snapverse_db
@@ -27,3 +29,4 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
       timeout: 10s
       retries: 2
+
