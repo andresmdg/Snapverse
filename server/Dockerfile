@@ -1,23 +1,22 @@
-# Etapa de construcción para crear el JAR
+# Fase de construcción
 FROM maven:3.8.5-openjdk-17 AS build
-WORKDIR /snapverse
+WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Etapa final para el contenedor de aplicación
+# Fase de ejecución
 FROM openjdk:17-jdk-slim
-WORKDIR /snapverse
+WORKDIR /app
+COPY --from=build /app/target/snapverse-0.0.1-SNAPSHOT.jar snapverse.jar
 
-# Copia el JAR desde la etapa de construcción
-COPY --from=build /snapverse/target/snapverse-0.0.1-SNAPSHOT.jar snapverse.jar
+# Crear un directorio para las llaves JWT
+RUN mkdir -p /app/jwtkeys
 
-# Crea y copia las llaves dentro de una carpeta accesible en el classpath
-RUN mkdir -p /snapverse/jwtKeys && \
-    openssl genrsa -out /snapverse/jwtKeys/private_key.pem 2048 && \
-    openssl rsa -pubout -in /snapverse/jwtKeys/private_key.pem -out /snapverse/jwtKeys/public_key.pem
+# Comando para generar las llaves si no existen
+RUN if [ ! -f /app/jwtkeys/private_key.pem ]; then \
+      openssl genrsa -out /app/jwtkeys/private_key.pem 2048 && \
+      openssl rsa -pubout -in /app/jwtkeys/private_key.pem -out /app/jwtkeys/public_key.pem; \
+    fi
 
-# Expone el puerto
 EXPOSE 8080
-
-# Ejecuta la aplicación con el perfil Docker
-ENTRYPOINT ["java", "-jar", "snapverse.jar"]
+ENTRYPOINT ["java", "-jar", "snapverse.jar", "--spring.profiles.active=docker"]

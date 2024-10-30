@@ -28,10 +28,10 @@ import java.util.Date;
 @Service
 public class JwtUtilityImpl implements JwtUtility {
 
-    @Value("classpath:jwtKeys/private_key.pem")
+    @Value("${jwtKeys.privateKeyPath}")
     private Resource privateKeyResource;
 
-    @Value("classpath:jwtKeys/public_key.pem")
+    @Value("${jwtKeys.publicKeyPath}")
     private Resource publicKeyResource;
 
     @Override
