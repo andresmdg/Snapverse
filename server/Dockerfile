@@ -3,8 +3,8 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-RUN apt-get update && \
-    apt-get install -y openssl && \
+# Instalar OpenSSL y generar claves
+RUN apk add --no-cache openssl && \
     mkdir -p /app/src/main/resources/jwtKeys && \
     openssl genrsa -out /app/src/main/resources/jwtKeys/private_key.pem 2048 && \
     openssl rsa -pubout -in /app/src/main/resources/jwtKeys/private_key.pem -out /app/src/main/resources/jwtKeys/public_key.pem
