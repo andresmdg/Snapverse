@@ -47,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
                     .name(user.get().getName())
                     .lastname(user.get().getLastname())
                     .username(user.get().getUsername()).build();
+                    System.out.println("Se va a generar el token.");
                     String token = jwtUtilityService.generateJWT(user.get().getId());
                     System.out.println("El token es:" + token);
                     return ApiResponse.builder()
