@@ -51,6 +51,7 @@ public class JwtUtilityImpl implements JwtUtility {
     public String generateJWT(Long userId)
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
         System.out.println("Generating token for user ID: " + userId);
+        System.out.println("Loading private key from: " + privateKeyResource.getURI());
         PrivateKey privateKey = loadPrivateKey(privateKeyResource);
         JWSSigner signer = new RSASSASigner(privateKey);
         Date now = new Date();
