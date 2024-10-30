@@ -34,14 +34,21 @@ public class AuthServiceImpl implements AuthService {
                 throw new UserNotFoundException("User not registered!");
             }
 
+            System.out.println(user.toString());
+            System.out.println(login.getUsername().toString());
+            System.out.println(login.getPassword().toString());
+            
             if (PasswordUtil.verifyPassword(login.getPassword(), user.get().getPassword())) {
                 try {
+                    System.out.println("El password y el username si coincidieron");
+
                     UserDTO userDTO = UserDTO.builder()
-                        .id(user.get().getId())
-                        .name(user.get().getName())
-                        .lastname(user.get().getLastname())
-                        .username(user.get().getUsername()).build();
+                    .id(user.get().getId())
+                    .name(user.get().getName())
+                    .lastname(user.get().getLastname())
+                    .username(user.get().getUsername()).build();
                     String token = jwtUtilityService.generateJWT(user.get().getId());
+                    System.out.println(token.toString());
                     return ApiResponse.builder()
                             .success(true)
                             .statusCode(HttpStatus.OK.value())
@@ -50,7 +57,8 @@ public class AuthServiceImpl implements AuthService {
                             .user(userDTO)
                             .token(token)
                             .build();
-                } catch (Exception e) {
+                } catch (TokenGenerationException e) {
+                    System.out.println("El token no se genero");
                     throw new TokenGenerationException("Error generating token", e);
                 }
             } else {
