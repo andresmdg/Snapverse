@@ -6,5 +6,5 @@ COPY target/snapverse-0.0.1-SNAPSHOT.jar snapverse.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
 
+ENTRYPOINT ["java", "-jar", "snapverse.jar"]
